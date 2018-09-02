@@ -125,7 +125,7 @@ namespace rutils {
 
     template <class T, size_t N>
     spsc_queue<T, N>::spsc_queue(T* const data) : _data(data), _write(data), _read(data) {
-        _item_count.store(0);
+        _item_count.store(0, std::memory_order_seq_cst);
     }
 
     template <class T, size_t N>
@@ -186,16 +186,16 @@ namespace rutils {
 
     template <class T, size_t N>
     void spsc_queue<T, N>::do_enqueue(const T& obj) {
-        memcpy(_write, &obj, sizeof(T));
+        *_write = obj;
+        _item_count.fetch_add(1, std::memory_order_seq_cst);
         _write = (_write + 1 == (_data + N)) ? _data : _write + 1;
-        _item_count++;
     }
 
     template <class T, size_t N>
     void spsc_queue<T, N>::do_dequeue(T& obj) {
-        memcpy(&obj, _read, sizeof(T));
+        obj = *_read;
+        _item_count.fetch_sub(1, std::memory_order_seq_cst);
         _read = (_read + 1 == (_data + N)) ? _data : _read + 1;
-        _item_count--;
     }
 } // namespace rutils
 
