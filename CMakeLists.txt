@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.3.0)
 set(PROJECT_NAME_STR lock_free_queue)
 project(${PROJECT_NAME_STR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

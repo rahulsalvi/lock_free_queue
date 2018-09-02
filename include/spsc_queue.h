@@ -12,6 +12,8 @@ using std::is_trivially_copyable;
 using std::memcpy;
 using std::size_t;
 
+#define CACHE_LINE_SIZE 64 // bytes
+
 /**
  * @brief Rahul's Utilities
  */
@@ -113,11 +115,12 @@ namespace rutils {
          *
          * @param obj the location to store the dequeued object
          */
-        void           do_dequeue(T& obj);
-        T* const       _data;
-        T*             _write;
-        T*             _read;
-        atomic<size_t> _item_count;
+        void do_dequeue(T& obj);
+
+        alignas(CACHE_LINE_SIZE) T* const _data;
+        alignas(CACHE_LINE_SIZE) T* _write;
+        alignas(CACHE_LINE_SIZE) T* _read;
+        alignas(CACHE_LINE_SIZE) atomic<size_t> _item_count;
     };
 
     template <class T, size_t N>
