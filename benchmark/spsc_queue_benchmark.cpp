@@ -3,20 +3,17 @@
 #include "spsc_queue.h"
 
 // clang-format off
-#define ENQUEUE_ITERATIONS       1000000
-#define ENQUEUE_REPETITIONS      50
-#define DEQUEUE_ITERATIONS       1000000
-#define DEQUEUE_REPETITIONS      50
+#define ENQUEUE_ITERATIONS  1000000
+#define ENQUEUE_REPETITIONS 50
+#define DEQUEUE_ITERATIONS  1000000
+#define DEQUEUE_REPETITIONS 50
 // clang-format on
 
 static void BM_Enqueue(benchmark::State& state) {
     int                                         buf[ENQUEUE_ITERATIONS];
     int                                         x = 0;
     rutils::spsc_queue<int, ENQUEUE_ITERATIONS> test_queue(buf);
-    for (auto _ : state) {
-        test_queue.enqueue(x);
-        benchmark::ClobberMemory();
-    }
+    for (auto _ : state) { benchmark::DoNotOptimize(test_queue.enqueue(x)); }
 }
 
 BENCHMARK(BM_Enqueue)
@@ -34,8 +31,7 @@ static void BM_Dequeue(benchmark::State& state) {
     for (int i = 0; i < DEQUEUE_ITERATIONS; i++) { test_queue.enqueue(x); }
     for (auto _ : state) {
         int x;
-        test_queue.dequeue(x);
-        benchmark::ClobberMemory();
+        benchmark::DoNotOptimize(test_queue.dequeue(x));
     }
 }
 
